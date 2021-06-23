@@ -1,0 +1,10 @@
+{
+    "EUR.USD" : {
+        "IBKR" : {
+            "symbol"   : "EUR",
+            "secType"  : "CASH", 
+            "exchange" : "IDEALPRO", 
+            "currency" : "USD"
+        }
+    }
+}
