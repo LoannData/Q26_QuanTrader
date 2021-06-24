@@ -39,7 +39,7 @@ c.newContract("EUR.USD", configFile = "../quanTrade/client_contracts.json")
  
 
 
-restTime = 30 
+restTime = 60 
 while True : 
     s.run(c) 
     s.show(c) 

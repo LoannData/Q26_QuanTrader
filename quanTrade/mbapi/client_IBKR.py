@@ -1318,9 +1318,14 @@ class CLIENT_IBKR(IBAPIWrapper, IBAPIClient):
     def getHistoricalData_(self, contractFile, dateIni, dateEnd, timeframe, onlyOpen = True) : 
         """ 
         - Simulate the case onlyOpen = False even during days off 
+        
+        - Find a way to avoid the server responds nothing 
         """
         
         contract = self.createContract(contractFile)
+        
+        print ("Get Hst Data function : ")
+        print ("Date ini : ", dateIni,", Date end : ",dateEnd,", timeframe : ",timeframe) 
         
         
         # Ticker ID 
@@ -1376,11 +1381,11 @@ class CLIENT_IBKR(IBAPIWrapper, IBAPIClient):
             while time_width % timeLengthUnit_[locIndex] != datetime.timedelta(seconds = 0) : 
                 locIndex += 1 
             
-            locWidth = int(time_width/timeLengthUnit_[locIndex]) 
+            locWidth = int(time_width/timeLengthUnit_[locIndex])+1 
             durationStr = str(locWidth)+" "+timeLengthUnit[locIndex]
             
             if locWidth > 86400 : 
-                locWidth = int(time_width/timeLengthUnit_[locIndex-1])
+                locWidth = int(time_width/timeLengthUnit_[locIndex-1])+1
                 durationStr = str(locWidth)+" "+timeLengthUnit[locIndex-1]
             
                 
@@ -1395,7 +1400,7 @@ class CLIENT_IBKR(IBAPIWrapper, IBAPIClient):
             while time_width % timeLengthUnit_[locIndex] != datetime.timedelta(seconds = 0) : 
                 locIndex += 1 
             
-            locWidth = int(time_width/timeLengthUnit_[locIndex]) 
+            locWidth = int(time_width/timeLengthUnit_[locIndex]) +1
             durationStr = str(locWidth)+" "+timeLengthUnit[locIndex]
             
             
@@ -1404,6 +1409,7 @@ class CLIENT_IBKR(IBAPIWrapper, IBAPIClient):
         print ("time_end = ",time_end) 
         print ("durationStr = ",durationStr) 
         print ("barSizeSetting = ",barSizeSetting)
+        
         
         dataAsk = self.obtain_historical_data(contract, 
                                               time_end       = time_end, 
@@ -1438,9 +1444,16 @@ class CLIENT_IBKR(IBAPIWrapper, IBAPIClient):
             "bidhigh" : list(), 
             "bidlow"  : list(), 
             "bidclose": list(), 
-            "time"    : list(), 
+            "date"    : list(), 
             "volume"  : list()
             }
+        
+        sizeAsk = len(dataAsk) 
+        sizeBid = len(dataBid)
+        
+        if sizeAsk != sizeBid : 
+            print ("Error. Ask hst data and Bid hst data have not the same lenght")
+            return dataset
         
         for d in dataAsk : 
             
@@ -1452,7 +1465,7 @@ class CLIENT_IBKR(IBAPIWrapper, IBAPIClient):
             
             locTime = datetime.datetime.strptime(d.get("Time"),'%Y%m%d  %H:%M:%S') if len(d.get("Time")) > 8 else datetime.datetime.strptime(d.get("Time"),'%Y%m%d')
             
-            dataset.get("time").append(locTime)
+            dataset.get("date").append(locTime)
 
         for d in dataBid : 
             
@@ -1469,7 +1482,7 @@ class CLIENT_IBKR(IBAPIWrapper, IBAPIClient):
     
     def getLastPrice_(self, contractFile) : 
         
-        dataset = self.getHistoricalData_(contractFile, 1, 0, 1, onlyOpen = True)
+        dataset = self.getHistoricalData_(contractFile, 10, 0, 1, onlyOpen = True)
         
         #print (dataset)
         
@@ -1509,24 +1522,25 @@ class CLIENT_IBKR(IBAPIWrapper, IBAPIClient):
                 bidPrice = data[i].get("Price")
         
         marketState = "closed"
-        if dataset.get("time")[-1] > datetime.datetime.now() - datetime.timedelta(minutes = 2) : 
+        if dataset.get("date")[-1] > datetime.datetime.now() - datetime.timedelta(minutes = 2) : 
             marketState = "open"
         
-        lastPrice = {
-            "askopen"      : dataset.get("askopen")[-1], 
-            "askhigh"      : dataset.get("askhigh")[-1], 
-            "asklow"       : dataset.get("asklow")[-1], 
-            "askclose"     : dataset.get("askclose")[-1], 
+        
+        
+        lastPrice = dict() 
+        for key in list(dataset.keys()) : 
+            try : 
+                lastPrice.update({key : dataset.get("key")[-1]})
+            except : 
+                print ("No "+str(key)+" available in instant data price")
+                pass 
+        
+        
+        lastPrice.update({
             "askprice"     : askPrice, 
-            "bidopen"      : dataset.get("bidopen")[-1], 
-            "bidhigh"      : dataset.get("bidhigh")[-1], 
-            "bidlow"       : dataset.get("bidlow")[-1], 
-            "bidclose"     : dataset.get("bidclose")[-1], 
             "bidprice"     : bidPrice, 
-            "date"         : dataset.get("time")[-1], 
-            "volume"       : dataset.get("volume")[-1], 
             "market state" : marketState 
-            }
+            })
         
         return lastPrice 
 
