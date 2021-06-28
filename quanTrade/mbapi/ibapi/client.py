@@ -3269,11 +3269,10 @@ class EClient(object):
             self.wrapper.error(NO_VALID_ID, UPDATE_TWS.code(), UPDATE_TWS.msg() +
                     "  It does not support matching symbols request.")
             return
-        
+
         msg = make_field(OUT.REQ_MATCHING_SYMBOLS) \
            + make_field(reqId)   \
            + make_field(pattern)
-           
 
         self.sendMsg(msg)
 

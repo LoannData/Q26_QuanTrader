@@ -46,9 +46,9 @@ class CLIENT_MAIN :
         """
         if self.broker == "IBKR" : 
             # Connection to the client API
-            self.api.connection(utils.getClientConnectionInfo(file = configFile, 
-                                                              brokerName = self.broker, 
-                                                              referenceNumber = self.refNumber))
+            self.api.connection_(utils.getClientConnectionInfo(file = configFile, 
+                                                               brokerName = self.broker, 
+                                                               referenceNumber = self.refNumber))
         return 
     
     def checkConnection(self) : 
@@ -64,7 +64,7 @@ class CLIENT_MAIN :
         If connected, this function disconnect the broker's API object from the server. 
         """
         if self.broker == "IBKR" : 
-            self.api.deconnection()
+            self.api.disconnect()
         return 
     
     #########################################################################################
@@ -145,7 +145,7 @@ class CLIENT_MAIN :
 
         if self.broker == "IBKR" : 
             orderList = self.api.createOrder(configFile) 
-            self.api.placeOrder_(configFile.get("contract"), orderList)
+            self.api.placeOrderList(configFile.get("contract"), orderList)
         
         return orderList  
     
@@ -179,7 +179,7 @@ class CLIENT_MAIN :
         executed yet on a given contract and to a given broker.  
         """
         if self.broker == "IBKR" : 
-            self.api.cancelOrder_(order = order) 
+            self.api.cancelOrder__(order = order) 
         return
     
     def cancelLastOrder(self, n = 1) : 
