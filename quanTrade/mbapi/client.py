@@ -30,6 +30,15 @@ class CLIENT_MAIN :
             # IBKR API initialisation 
             self.api = client.CLIENT_IBKR()  
         
+        if self.broker == "MT4" : 
+            dirname  = os.path.dirname(__file__)
+            filename = os.path.join(dirname,".")
+            sys.path.append(filename)
+            import quanTrade.mbapi.client_MT4 as client
+            # IBKR API initialisation 
+            self.api = client.CLIENT_MT4() 
+            
+        
         return 
     
     #########################################################################################
@@ -49,6 +58,14 @@ class CLIENT_MAIN :
             self.api.connection_(utils.getClientConnectionInfo(file = configFile, 
                                                                brokerName = self.broker, 
                                                                referenceNumber = self.refNumber))
+        
+        if self.broker == "MT4" : 
+            # Connection to the client API 
+            self.api.connection(utils.getClientConnectionInfo(file = configFile, 
+                                                              brokerName = self.broker, 
+                                                              referenceNumber = self.refNumber))
+            
+        
         return 
     
     def checkConnection(self) : 
@@ -57,6 +74,10 @@ class CLIENT_MAIN :
         """
         if self.broker == "IBKR" : 
             return self.api.checkConnection()
+        
+        if self.broker == "MT4" : 
+            return 
+        
         return 
     
     def disconnect(self) : 
@@ -65,6 +86,10 @@ class CLIENT_MAIN :
         """
         if self.broker == "IBKR" : 
             self.api.disconnect()
+            
+        if self.broker == "MT4" : 
+            return 
+            
         return 
     
     #########################################################################################
@@ -81,6 +106,12 @@ class CLIENT_MAIN :
             self.contractsList[contractName] = utils.getContractInfo(file         = configFile, 
                                                                      brokerName   = self.broker, 
                                                                      contractName = contractName)
+        
+        if self.broker == "MT4" : 
+            self.contractsList[contractName] = utils.getContractInfo(file         = configFile, 
+                                                                     brokerName   = self.broker, 
+                                                                     contractName = contractName)
+            
         return 
     
     def removeContract(self, 
@@ -89,6 +120,9 @@ class CLIENT_MAIN :
         Function that allows to remove a contract existing in the contractsList object. 
         """
         if self.broker == "IBKR" : 
+            del self.contractsList[contractName] 
+            
+        if self.broker == "MT4" : 
             del self.contractsList[contractName] 
     #########################################################################################
     # CONTRACT DATA METHODS 
@@ -100,6 +134,10 @@ class CLIENT_MAIN :
         if self.broker == "IBKR" : 
             contract = self.contractsList.get(contractName)
             return self.api.getHistoricalData_(contract, dateIni, dateEnd, timeframe, onlyOpen = onlyOpen)
+        
+        if self.broker == "MT4" : 
+            contract = self.contractsList.get(contractName)
+            return self.api.getHistoricalData(contract, dateIni, dateEnd, timeframe, onlyOpen = onlyOpen)
             
         return 
     
@@ -110,6 +148,12 @@ class CLIENT_MAIN :
         if self.broker == "IBKR" : 
             contract = self.contractsList.get(contractName)
             return self.api.getLastPrice_(contract)
+        
+        if self.broker == "MT4" : 
+            contract = self.contractsList.get(contractName)
+            return self.api.getLastPrice(contract)
+            
+        
         return
 
     #########################################################################################
@@ -147,6 +191,10 @@ class CLIENT_MAIN :
             orderList = self.api.createOrder(configFile) 
             self.api.placeOrderList(configFile.get("contract"), orderList)
         
+        if self.broker == "MT4" : 
+            orderList = self.api.placeOrder_(configFile)
+            
+        
         return orderList  
     
     def editSLOrder(self, 
@@ -157,8 +205,12 @@ class CLIENT_MAIN :
         Function that allows to edit the stoploss of a bracket order 
         """
         if stoploss is not None : 
+            
             if self.broker == "IBKR" : 
                 self.api.editLimitOrder(self.contractsList.get(contractName), order, stoploss)
+                
+            if self.broker == "MT4" : 
+                self.api.editPosition(order, stoploss = stoploss)
                 
     def editTPOrder(self, 
                     contractName, 
@@ -168,8 +220,12 @@ class CLIENT_MAIN :
         Function that allows to edit the takeprofit of a bracket order 
         """
         if takeprofit is not None : 
+            
             if self.broker == "IBKR" : 
                 self.api.editLimitOrder(self.contractsList.get(contractName), order, takeprofit)
+                
+            if self.broker == "MT4" : 
+                self.api.editPosition(order, takeprofit = takeprofit)
     
     def cancelOrder(self, 
                     contractName, 
@@ -180,14 +236,18 @@ class CLIENT_MAIN :
         """
         if self.broker == "IBKR" : 
             self.api.cancelOrder__(order = order) 
+            
+        if self.broker == "MT4" : 
+            self.api.cancelOrder(order)
+            
         return
     
     def cancelLastOrder(self, n = 1) : 
         """  
         Function that cancel the last-n specific order. 
         """
-        if self.broker == "IBKR" : 
-            self.api.cancelOrder_(option = n) 
+        # if self.broker == "IBKR" : 
+        #     self.api.cancelOrder_(option = n) 
         return 
     
     def readPositions(self) : 
@@ -204,6 +264,10 @@ class CLIENT_MAIN :
         """
         if self.broker == "IBKR" : 
             self.api.closePosition_(self.contractsList.get(contractName), order = order)
+            
+        if self.broker == "MT4" : 
+            symbolName = self.contractsList.get(contractName).get("symbol")
+            self.api.closePosition(symbolName, order)
         return 
 
     def closeAllPositions(self) : 

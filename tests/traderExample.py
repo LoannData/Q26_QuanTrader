@@ -27,10 +27,10 @@ sys.path.append(strategyPath)
 strategy = importlib.import_module(strategyFile)
 s = strategy.STRATEGY()
 
-s.volumeFactor = 1000
+s.volumeFactor = 1
 
 # Connection to the API 
-c = client.CLIENT_MAIN("IBKR") 
+c = client.CLIENT_MAIN("MT4") 
 print ("Create the client object")
 c.connect(configFile = "../quanTrade/client_connection.json") 
 print ("Connecting to the server. 5 seconds wait")

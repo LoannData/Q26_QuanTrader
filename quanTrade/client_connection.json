@@ -4,6 +4,11 @@
             "ip"     : "127.0.0.1", 
             "port"   : 7497, 
             "client" : 0
+        }, 
+        "MT4" : {
+            "port"   : 15555, 
+            "host"   : "127.0.0.1", 
+            "path"   : "/home/loann/Bureau/Programmes de bureau/Admiral Markets MT4/MQL4/Files/" 
         }
     },
     "1" : {

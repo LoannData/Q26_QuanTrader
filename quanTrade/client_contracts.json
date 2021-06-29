@@ -5,6 +5,9 @@
             "secType"  : "CASH", 
             "exchange" : "IDEALPRO", 
             "currency" : "USD"
+        },
+        "MT4" : {
+            "symbol"   : "EURUSD"
         }
     }
 }
