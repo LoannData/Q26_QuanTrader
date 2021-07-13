@@ -6,11 +6,15 @@ Created on Fri Mar 26 15:24:37 2021
 @author: loann
 """
 
-import quanTrade.mbapi.utils as utils
 import sys, os 
 
 
-class CLIENT_MAIN : 
+import quanTrade.mbapi.utils as utils
+
+from quanTrade.mbapi.system import SYSTEM
+
+
+class CLIENT_MAIN(SYSTEM) : 
     
     def __init__(self, 
                  brokerName, 
@@ -20,6 +24,9 @@ class CLIENT_MAIN :
         self.api              = None # Broker's api object 
         self.contractsList    = {}   # List of the available contracts for the current instance
                                      # Here a contract is a contract object compatible with the broker api 
+        self.configFile_connexion = None 
+        self.configFile_contract  = None
+        self.trading_log_path     = None 
         
         # Local client initialisation 
         if self.broker == "IBKR" : 
@@ -53,6 +60,9 @@ class CLIENT_MAIN :
             brokerName [str]  : Name of the broker to connect 
             configFile [dict] : Dictionnary that contains the broker's connection informations 
         """
+        if configFile is None : 
+            configFile = self.configFile_connexion
+        
         if self.broker == "IBKR" : 
             # Connection to the client API
             self.api.connection_(utils.getClientConnectionInfo(file = configFile, 
@@ -102,6 +112,9 @@ class CLIENT_MAIN :
         Function that allows to define a new contract object compatible with a selected 
         broker. 
         """
+        if configFile is None : 
+            configFile = self.configFile_contract 
+        
         if self.broker == "IBKR" : 
             self.contractsList[contractName] = utils.getContractInfo(file         = configFile, 
                                                                      brokerName   = self.broker, 
@@ -159,6 +172,7 @@ class CLIENT_MAIN :
     #########################################################################################
     # TRADING ORDER METHODS
     #########################################################################################
+    @SYSTEM.place_order
     def placeOrder(self, 
                    contractName,
                    action     = "long", # "long" or "short". 
@@ -194,7 +208,7 @@ class CLIENT_MAIN :
         if self.broker == "MT4" : 
             orderList = self.api.placeOrder_(configFile)
             
-        
+        # A good thing could be to normalize the borker's response to get it properly in the log 
         return orderList  
     
     def editSLOrder(self, 

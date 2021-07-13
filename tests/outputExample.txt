@@ -1,0 +1,4 @@
+{"test": [1, 2, 3]}
+{"Step": 1, "Local time": "2021-07-13 12:04:57.118536"}
+{"SYSTEM ACTION": "place order", "contractName": "EUR.USD", "action": "short", "orderType": "MKT", "volume": 0.1, "stoploss": 2.0, "takeprofit": 0.5, "client response": [{"ticket": "219182645", "lots": 0.1, "action": "short", "symbol": "EURUSD", "expiration": "2021.07.14 00:04", "type": "MKT", "stoploss": 2.0, "takeprofit": 0.5, "lmtprice": null}, {"ticket": "219182645", "lots": 0.1, "action": "short", "symbol": "EURUSD", "expiration": "2021.07.14 00:04", "type": "MKT", "stoploss": 2.0, "takeprofit": 0.5, "lmtprice": null}, {"ticket": "219182645", "lots": 0.1, "action": "short", "symbol": "EURUSD", "expiration": "2021.07.14 00:04", "type": "MKT", "stoploss": 2.0, "takeprofit": 0.5, "lmtprice": null}]}
+{"Step": 2, "Local time": "2021-07-13 12:06:01.102348"}
