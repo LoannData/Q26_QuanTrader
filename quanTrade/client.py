@@ -9,9 +9,9 @@ Created on Fri Mar 26 15:24:37 2021
 import sys, os 
 
 
-import quanTrade.mbapi.utils as utils
+import quanTrade.utils as utils
 
-from quanTrade.mbapi.system import SYSTEM
+from quanTrade.system import SYSTEM
 
 
 class CLIENT_MAIN(SYSTEM) : 
@@ -28,12 +28,18 @@ class CLIENT_MAIN(SYSTEM) :
         self.configFile_contract  = None
         self.trading_log_path     = None 
         
+        # Distant communication parameters 
+        self.enabled_telegram_bot         = False 
+        self.telegram_bot_mode            = None    # "read", "write"
+        self.telegram_bot                 = None 
+        self.telegram_message             = None 
+        
         # Local client initialisation 
         if self.broker == "IBKR" : 
             dirname  = os.path.dirname(__file__)
             filename = os.path.join(dirname,".")
             sys.path.append(filename)
-            import quanTrade.mbapi.client_IBKR as client
+            import quanTrade.client_IBKR as client
             # IBKR API initialisation 
             self.api = client.CLIENT_IBKR()  
         
@@ -41,12 +47,17 @@ class CLIENT_MAIN(SYSTEM) :
             dirname  = os.path.dirname(__file__)
             filename = os.path.join(dirname,".")
             sys.path.append(filename)
-            import quanTrade.mbapi.client_MT4 as client
+            import quanTrade.client_MT4 as client
             # IBKR API initialisation 
             self.api = client.CLIENT_MT4() 
             
         
         return 
+    
+    #########################################################################################
+    # LISTEN METHODS 
+    #########################################################################################
+
     
     #########################################################################################
     # CONNECTION METHODS 
@@ -140,6 +151,7 @@ class CLIENT_MAIN(SYSTEM) :
     #########################################################################################
     # CONTRACT DATA METHODS 
     #########################################################################################
+    @SYSTEM.get_historical_data
     def getHistoricalData(self, contractName, dateIni, dateEnd, timeframe, onlyOpen = True) : 
         """ 
         Function that returns an historical dataset for the selected contract. 
@@ -154,6 +166,7 @@ class CLIENT_MAIN(SYSTEM) :
             
         return 
     
+    @SYSTEM.get_last_price
     def getLastPrice(self, contractName) : 
         """ 
         Function that returns the last existing price for the selected contract. 
@@ -211,6 +224,7 @@ class CLIENT_MAIN(SYSTEM) :
         # A good thing could be to normalize the borker's response to get it properly in the log 
         return orderList  
     
+    @SYSTEM.edit_SL_order
     def editSLOrder(self, 
                     contractName, 
                     order, 
@@ -226,6 +240,7 @@ class CLIENT_MAIN(SYSTEM) :
             if self.broker == "MT4" : 
                 self.api.editPosition(order, stoploss = stoploss)
                 
+    @SYSTEM.edit_TP_order
     def editTPOrder(self, 
                     contractName, 
                     order, 
@@ -241,6 +256,7 @@ class CLIENT_MAIN(SYSTEM) :
             if self.broker == "MT4" : 
                 self.api.editPosition(order, takeprofit = takeprofit)
     
+    @SYSTEM.cancel_order
     def cancelOrder(self, 
                     contractName, 
                     order) : 
@@ -270,6 +286,7 @@ class CLIENT_MAIN(SYSTEM) :
         """
         return 
     
+    @SYSTEM.close_position
     def closePosition(self, 
                       contractName, 
                       order = None) : 

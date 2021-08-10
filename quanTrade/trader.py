@@ -15,9 +15,9 @@ import sys, os
 dirname  = os.path.dirname(__file__)
 filename = os.path.join(dirname,".")
 sys.path.append(filename)
-import quanTrade.mbapi.client as client 
+import quanTrade.client as client 
+import quanTrade.distant as distant 
 #from quanTrade.mbapi.system import SYSTEM
-
 
 class TRADER : 
     
@@ -38,6 +38,49 @@ class TRADER :
         self.trading_log_path             = None 
         self.trading_log                  = None 
         self.trading_log_first_write_mode = None 
+        
+    
+    def set_telegram_listen_mode(self) : 
+        
+        assert self.client.telegram_bot_mode == "listen", "error, bad telegram mode."
+        
+        self.client.telegram_bot.set_listen_mode()
+        
+        return 
+
+    
+    
+    def initialize_telegram_bot(self, 
+                                TOKEN = None, 
+                                mode  = "write") : 
+        
+        assert self.client is not None, "Error, client object have to be defined before"
+        assert TOKEN is not None, "Error. No provided token."
+        
+        self.client.telegram_bot_mode = mode 
+        self.client.telegram_bot = distant.TELEGRAM_BOT()
+        self.client.telegram_bot.initialize() 
+        
+        return 
+    
+    def set_telegram_handler(self, 
+                             action    = "place order", 
+                             command   = "play") : 
+        
+        assert self.client is not None, "Error, client object have to be defined before"
+        self.client.telegram_bot.set_telegram_handler(action  = action, 
+                                               command = command)
+        
+        return 
+    
+    def enable_telegram_bot(self) : 
+        
+        assert self.client is not None, "Error, client object have to be defined before"
+        self.client.enabled_telegram_bot = True 
+        self.client.telegram_bot.start() 
+        
+        return 
+        
         
     def set_trading_log(self, 
                         path    = None, 
