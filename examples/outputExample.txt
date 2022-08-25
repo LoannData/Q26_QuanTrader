@@ -1,4 +1,4 @@
-{"New Trading Session": "2021-08-10 16:34:36.987531"}
+ {"New Trading Session": "2021-08-10 16:34:36.987531"}
 {"Step": 1, "Local time": "2021-08-10 16:34:36.987660"}
 {"SYSTEM ACTION": "get last price", "SYSTEM LOCAL TIME": "2021-08-10 16:34:37.548705", "contractName": "EUR.USD", "client response": "{'askopen': '1.17099000', 'askhigh': '1.17116000', 'asklow': '1.17099000', 'askclose': '1.17112000', 'bidopen': '1.17099000', 'bidhigh': '1.17116000', 'bidlow': '1.17099000', 'bidclose': '1.17112000', 'askprice': '1.17171000', 'bidprice': '1.17163000', 'date': datetime.datetime(2021, 8, 10, 17, 18), 'volume': '72.00000000', 'market state': 'open'}"}
 {"SYSTEM ACTION": "get historical data", "SYSTEM LOCAL TIME": "2021-08-10 16:34:38.550742", "contractName": "EUR.USD", "dateIni": 10, "dateEnd": 0, "timeframe": 5, "onlyOpen": true}

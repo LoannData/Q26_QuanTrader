@@ -3,3 +3,5 @@ build/
 *.pyc 
 *-info
 */__pycache__/*
+quanTrade/.DS_Store
+.DS_Store

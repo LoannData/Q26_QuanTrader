@@ -1,13 +1,13 @@
 {
-    "EUR.USD" : {
+    "GBP.USD" : {
         "IBKR" : {
-            "symbol"   : "EUR",
+            "symbol"   : "GBP",
             "secType"  : "CASH", 
             "exchange" : "IDEALPRO", 
             "currency" : "USD"
         },
         "MT4" : {
-            "symbol"   : "EURUSD"
+            "symbol"   : "GBPUSD"
         }
     }
 }
